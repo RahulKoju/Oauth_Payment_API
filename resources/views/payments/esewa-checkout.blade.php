@@ -18,10 +18,19 @@
                 </div>
 
                 <div class="divide-y divide-gray-200">
+                    <!-- Display Payment Details -->
                     <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
                         <div class="flex justify-between">
                             <div>Product Amount:</div>
                             <div class="font-medium">Rs. {{ number_format($paymentData['amount'], 2) }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div>Tax Amount:</div>
+                            <div class="font-medium">Rs. {{ number_format($paymentData['tax_amount'], 2) }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div>Service Charge:</div>
+                            <div class="font-medium">Rs. {{ number_format($paymentData['product_service_charge'], 2) }}</div>
                         </div>
                         <div class="flex justify-between">
                             <div>Delivery Charge:</div>

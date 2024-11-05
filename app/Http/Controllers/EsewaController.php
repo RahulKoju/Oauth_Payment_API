@@ -21,12 +21,16 @@ class EsewaController extends Controller
         // Validate the request
         $validated = $request->validate([
             'amount' => 'required|numeric|min:1',
+            'tax_amount' => 'nullable|numeric|min:0',
+            'product_service_charge' => 'nullable|numeric|min:0',
             'product_delivery_charge' => 'nullable|numeric|min:0',
         ]);
 
         // Prepare payment data
         $paymentData = [
             'amount' => $validated['amount'],
+            'tax_amount' => $validated['tax_amount'] ?? 0,
+            'product_service_charge' => $validated['product_service_charge'] ?? 0,
             'product_delivery_charge' => $validated['product_delivery_charge'] ?? 0,
             'transaction_uuid' => date('ymd-His') . '-' . Str::random(6),
         ];
@@ -37,16 +41,6 @@ class EsewaController extends Controller
         if (!$response['success']) {
             return redirect()->back()->with('error', $response['message']);
         }
-
-        // Store transaction details in session for verification
-        session([
-            'esewa_transaction' => [
-                'uuid' => $paymentData['transaction_uuid'],
-                'amount' => $paymentData['amount'],
-                'total_amount' => $paymentData['amount'] + $paymentData['product_delivery_charge'],
-                'timestamp' => now(),
-            ]
-        ]);
 
         return view('payments.esewa-checkout', [
             'paymentUrl' => $response['payment_url'],
@@ -59,41 +53,20 @@ class EsewaController extends Controller
         $response = $this->esewaService->verifyPayment($request->data);
 
         if (!$response['success']) {
-            return redirect()->route('payment.failed')->with('error', $response['message']);
+            return redirect()->route('esewa.failure')->with('error', $response['message']);
         }
-        // Get stored transaction details
-        $storedTransaction = session('esewa_transaction');
-
-        if (!$storedTransaction) {
-            return redirect()->route('dashboard')
-                ->with('error', 'Invalid transaction session');
-        }
-
-        // Verify transaction details match
-        $decodedResponse = $response['data'];
-        if (
-            $decodedResponse['transaction_uuid'] !== $storedTransaction['uuid'] ||
-            $decodedResponse['total_amount'] != $storedTransaction['total_amount']
-        ) {
-            return redirect()->route('dashboard')
-                ->with('error', 'Transaction details mismatch');
-        }
-
-        // Clear the transaction from session
-        session()->forget('esewa_transaction');
 
         // Update your order status here
         // You might want to dispatch a job here to handle the payment success
 
-        return redirect()->route('payment.success')->with('success', 'Payment completed successfully');
+        $successMessage = $request->session()->get('success', 'Payment completed successfully');
+        return view('payments.esewa-success', ['message' => $successMessage]);
     }
 
-    public function failure()
+    public function failure(Request $request)
     {
-        // Clear the transaction from session
-        session()->forget('esewa_transaction');
-
-        return redirect()->route('payment.failed')->with('error', 'Payment failed or was cancelled');
+        $errorMessage = $request->session()->get('error', 'Payment failed or was cancelled');
+        return view('payments.esewa-failure', ['error' => $errorMessage]);
     }
 
     public function checkStatus(Request $request)

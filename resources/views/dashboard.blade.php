@@ -57,9 +57,9 @@
                 <!-- Products Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach([
-                    ['name' => 'Basic Package', 'price' => 100, 'delivery' => 10],
-                    ['name' => 'Standard Package', 'price' => 200, 'delivery' => 15],
-                    ['name' => 'Premium Package', 'price' => 500, 'delivery' => 20],
+                    ['name' => 'Basic Package', 'price' => 10, 'delivery' => 1, 'tax_amount' => 1, 'service_charge' => 2],
+                    ['name' => 'Standard Package', 'price' => 20, 'delivery' => 2, 'tax_amount' => 2, 'service_charge' => 4],
+                    ['name' => 'Premium Package', 'price' => 50, 'delivery' => 4, 'tax_amount' => 3, 'service_charge' => 6],
                     ] as $product)
                     <div class="bg-white rounded-lg shadow-md overflow-hidden">
                         <div class="relative pb-48 overflow-hidden">
@@ -76,6 +76,8 @@
                                 @csrf
                                 <input type="hidden" name="amount" value="{{ $product['price'] }}">
                                 <input type="hidden" name="product_delivery_charge" value="{{ $product['delivery'] }}">
+                                <input type="hidden" name="tax_amount" value="{{ $product['tax_amount'] }}">
+                                <input type="hidden" name="product_service_charge" value="{{ $product['service_charge'] }}">
 
                                 <button type="submit" class="w-full bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition duration-200 flex items-center justify-center space-x-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

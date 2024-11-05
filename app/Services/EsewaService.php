@@ -19,7 +19,7 @@ class EsewaService
 
     private function generateSignature($totalAmount, $transactionUuid)
     {
-        $dataToSign = $totalAmount . ',' . $transactionUuid . ',' . config('services.esewa.product_code');
+        $dataToSign = "total_amount={$totalAmount},transaction_uuid={$transactionUuid},product_code=" . config('services.esewa.product_code');
         return base64_encode(hash_hmac('sha256', $dataToSign, $this->secretKey, true));
     }
 
@@ -39,10 +39,15 @@ class EsewaService
             //validate
             $this->validatePaymentData($data);
 
-            $totalAmount = $data['amount'] + ($data['product_delivery_charge'] ?? 0);
+            $totalAmount = $data['amount'] +
+                ($data['tax_amount'] ?? 0) +
+                ($data['product_service_charge'] ?? 0) +
+                ($data['product_delivery_charge'] ?? 0);
 
             $paymentData = [
                 'amount' => $data['amount'],
+                'tax_amount' => $data['tax_amount'] ?? 0,
+                'product_service_charge' => $data['product_service_charge'] ?? 0,
                 'product_delivery_charge' => $data['product_delivery_charge'] ?? 0,
                 'total_amount' => $totalAmount,
                 'transaction_uuid' => $data['transaction_uuid'],
@@ -71,17 +76,18 @@ class EsewaService
     {
         try {
             //decode the response
-            $decodedResponse = json_decode(base64_decode($encodedResponse, true));
-
+            $decodedResponse = json_decode(base64_decode($encodedResponse, true), true);
             //verify signature
             if (!$decodedResponse) {
                 throw new Exception('Invalid response format');
             }
-            $signedFields = explode(',', $decodedResponse['signed_field_names']);
-            $dataToSign = '';
-            foreach ($signedFields as $field) {
-                $dataToSign .= $decodedResponse[$field];
+            //$dataToSign = "transaction_code={$decodedResponse['transaction_code']},status={$decodedResponse['status']},total_amount={$decodedResponse['total_amount']},transaction_uuid={$decodedResponse['transaction_uuid']},product_code={$decodedResponse['product_code']},signed_field_names={$decodedResponse['signed_field_names']}";
+            $signedFieldNames = explode(',', $decodedResponse['signed_field_names']);
+            $dataToSignParts = [];
+            foreach ($signedFieldNames as $fieldName) {
+                $dataToSignParts[] = "{$fieldName}={$decodedResponse[$fieldName]}";
             }
+            $dataToSign = implode(',', $dataToSignParts);
             $generatedSignature = base64_encode(hash_hmac('sha256', $dataToSign, $this->secretKey, true));
             if ($generatedSignature !== $decodedResponse['signature']) {
                 throw new Exception('Invalid Signature');
