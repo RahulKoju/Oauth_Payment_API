@@ -39,4 +39,8 @@ return [
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
+    'esewa' => [
+        'product_code' => env('ESEWA_PRODUCT_CODE', 'EPAYTEST'),
+        'secret_key' => env('ESEWA_SECRET_KEY', '8gBm/:&EnhH.1/q'),
+    ],
 ];

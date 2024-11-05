@@ -22,5 +22,7 @@ Route::get('auth/google', [AuthController::class, 'redirectToGoogle'])->name('au
 Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/esewa/success', [EsewaController::class, 'success'])->name('esewa.success');
-Route::get('/esewa/failure', [EsewaController::class, 'failure'])->name('esewa.failure');
+Route::post('/checkout/esewa', [EsewaController::class, 'checkout'])->name('esewa.checkout');
+Route::get('/payment/esewa/success', [EsewaController::class, 'success'])->name('esewa.success');
+Route::get('/payment/esewa/failure', [EsewaController::class, 'failure'])->name('esewa.failure');
+Route::get('/payment/esewa/status', [EsewaController::class, 'checkStatus'])->name('esewa.status');
