@@ -71,10 +71,11 @@
                                 <span class="text-2xl font-bold text-blue-600">Rs. {{ $product['price'] }}</span>
                             </div>
                             <p class="text-gray-500 text-sm mb-4">Delivery Charge: Rs. {{ $product['delivery'] }}</p>
-
+                            <!-- eSewa Payment Button -->
                             <form action="{{ route('esewa.checkout') }}" method="POST" class="mt-4">
                                 @csrf
                                 <input type="hidden" name="amount" value="{{ $product['price'] }}">
+                                <input type="hidden" name="product_name" value="{{ $product['name'] }}">
                                 <input type="hidden" name="product_delivery_charge" value="{{ $product['delivery'] }}">
                                 <input type="hidden" name="tax_amount" value="{{ $product['tax_amount'] }}">
                                 <input type="hidden" name="product_service_charge" value="{{ $product['service_charge'] }}">
@@ -84,6 +85,22 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                                     </svg>
                                     <span>Pay with eSewa</span>
+                                </button>
+                            </form>
+                            <!-- Khalti Payment Button -->
+                            <form action="{{ route('khalti.checkout') }}" method="POST" class="mt-4">
+                                @csrf
+                                <input type="hidden" name="amount" value="{{ $product['price'] }}">
+                                <input type="hidden" name="product_name" value="{{ $product['name'] }}">
+                                <input type="hidden" name="product_delivery_charge" value="{{ $product['delivery'] }}">
+                                <input type="hidden" name="tax_amount" value="{{ $product['tax_amount'] }}">
+                                <input type="hidden" name="product_service_charge" value="{{ $product['service_charge'] }}">
+
+                                <button type="submit" class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition duration-200 flex items-center justify-center space-x-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    <span>Pay with Khalti</span>
                                 </button>
                             </form>
                         </div>

@@ -28,6 +28,7 @@ class EsewaController extends Controller
 
         // Prepare payment data
         $paymentData = [
+            'product_name' => $request->product_name,
             'amount' => $validated['amount'],
             'tax_amount' => $validated['tax_amount'] ?? 0,
             'product_service_charge' => $validated['product_service_charge'] ?? 0,

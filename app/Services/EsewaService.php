@@ -45,6 +45,7 @@ class EsewaService
                 ($data['product_delivery_charge'] ?? 0);
 
             $paymentData = [
+                'product_name' => $data['product_name'],
                 'amount' => $data['amount'],
                 'tax_amount' => $data['tax_amount'] ?? 0,
                 'product_service_charge' => $data['product_service_charge'] ?? 0,
