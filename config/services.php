@@ -43,4 +43,8 @@ return [
         'product_code' => env('ESEWA_PRODUCT_CODE', 'EPAYTEST'),
         'secret_key' => env('ESEWA_SECRET_KEY', '8gBm/:&EnhH.1/q'),
     ],
+    'khalti' => [
+        'secret_key' => env('KHALTI_SECRET_KEY'),
+        'public_key' => env('KHALTI_PUBLIC_KEY'),
+    ],
 ];
